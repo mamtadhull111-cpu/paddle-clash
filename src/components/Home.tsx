@@ -44,16 +44,19 @@ export default function Home({ onStart, config, setConfig }: HomeProps) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 overflow-hidden relative transition-colors duration-500" style={{ backgroundColor: config.bgColor }}>
+    <div className="min-h-screen flex items-center justify-center p-4 overflow-y-auto md:overflow-hidden relative transition-colors duration-500" style={{ backgroundColor: config.bgColor }}>
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="z-10 w-full max-w-4xl h-[600px] bg-slate-900/30 backdrop-blur-2xl rounded-[2rem] overflow-hidden flex shadow-2xl transition-all duration-500"
+        className="z-10 w-full max-w-4xl min-h-[550px] md:h-[600px] bg-slate-900/30 backdrop-blur-2xl rounded-[2rem] overflow-hidden flex flex-col md:flex-row shadow-2xl transition-all duration-500"
         style={{ border: `4px solid ${config.bgColor}` }}
       >
         {/* Sidebar */}
-        <div className="w-64 flex flex-col bg-slate-900/60 pt-8 transition-all duration-500" style={{ borderRight: `2px solid ${config.bgColor}` }}>
-          <nav className="flex-grow flex flex-col">
+        <div 
+          className="w-full md:w-64 flex flex-row md:flex-col bg-slate-900/60 pt-0 md:pt-8 border-b-2 md:border-b-0 md:border-r-2 transition-all duration-500" 
+          style={{ borderColor: config.bgColor }}
+        >
+          <nav className="flex-grow flex flex-row md:flex-col overflow-x-auto md:overflow-x-visible scrollbar-none">
             {[
               { id: "play", label: "Play", icon: Play },
               { id: "difficulty", label: "Difficulty", icon: Clock },
@@ -65,21 +68,22 @@ export default function Home({ onStart, config, setConfig }: HomeProps) {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
                 className={cn(
-                  "flex items-center gap-4 px-8 py-6 text-sm font-extrabold uppercase tracking-widest transition-all border-l-4",
+                  "flex flex-1 md:flex-initial items-center justify-center md:justify-start gap-2 md:gap-4 px-4 py-4 md:px-8 md:py-6 text-xs md:text-sm font-extrabold uppercase tracking-widest transition-all border-b-4 md:border-b-0 md:border-l-4 min-w-[90px] md:min-w-0 whitespace-nowrap",
                   activeTab === tab.id 
                     ? "text-[#87CEEB] bg-white/5 border-[#87CEEB]" 
                     : "text-slate-400 border-transparent hover:text-black hover:bg-[#87CEEB]"
                 )}
               >
-                <tab.icon className="h-5 w-5" />
-                {tab.label}
+                <tab.icon className="h-4 w-4 md:h-5 md:w-5" />
+                <span className="hidden sm:inline md:inline">{tab.label}</span>
+                <span className="inline sm:hidden md:hidden">{tab.label.substring(0, 4)}</span>
               </button>
             ))}
           </nav>
         </div>
 
         {/* Content Area */}
-        <div className="flex-grow p-12 overflow-y-auto relative">
+        <div className="flex-grow p-6 md:p-12 overflow-y-auto relative">
           <AnimatePresence mode="wait">
             {activeTab === "play" && (
               <motion.div
@@ -87,24 +91,24 @@ export default function Home({ onStart, config, setConfig }: HomeProps) {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                className="h-full flex flex-col items-center justify-center max-w-md mx-auto text-center"
+                className="h-full flex flex-col items-center justify-center max-w-md mx-auto text-center py-4"
               >
-                <h2 className="text-7xl font-black italic tracking-tighter mb-2 uppercase leading-none">
+                <h2 className="text-5xl md:text-7xl font-black italic tracking-tighter mb-2 uppercase leading-none">
                   <span className="text-slate-500">SMASH</span><span className="text-[#87CEEB]">ZONE</span>
                 </h2>
-                <p className="text-slate-500 text-[10px] uppercase tracking-[0.5em] mb-12 font-black">Pro League Edition</p>
+                <p className="text-slate-500 text-[10px] uppercase tracking-[0.5em] mb-8 md:mb-12 font-black">Pro League Edition</p>
                 
                 <div className="space-y-4 w-full">
                   <Button 
                     onClick={() => setShowCustomization("ai")}
-                    className="w-full h-16 bg-white text-black hover:bg-[#87CEEB] hover:text-black font-extrabold text-lg rounded-xl shadow-xl transition-all hover:-translate-y-1"
+                    className="w-full h-14 md:h-16 bg-white text-black hover:bg-[#87CEEB] hover:text-black font-extrabold text-base md:text-lg rounded-xl shadow-xl transition-all hover:-translate-y-1"
                   >
                     SINGLE PLAYER
                   </Button>
                   <Button 
                     onClick={() => setShowCustomization("pvp")}
                     variant="outline"
-                    className="w-full h-16 bg-white/5 border-2 border-white/10 text-white hover:bg-[#87CEEB] hover:text-black hover:border-[#87CEEB] font-extrabold text-lg rounded-xl transition-all hover:-translate-y-1"
+                    className="w-full h-14 md:h-16 bg-white/5 border-2 border-white/10 text-white hover:bg-[#87CEEB] hover:text-black hover:border-[#87CEEB] font-extrabold text-base md:text-lg rounded-xl transition-all hover:-translate-y-1"
                   >
                     LOCAL MULTIPLAYER
                   </Button>
@@ -280,19 +284,19 @@ export default function Home({ onStart, config, setConfig }: HomeProps) {
             <motion.div
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
-              className="bg-slate-900/95 p-10 rounded-[2rem] border-2 border-white/10 shadow-2xl w-full max-w-md text-center"
+              className="bg-slate-900/95 p-6 md:p-10 rounded-[2rem] border-2 border-white/10 shadow-2xl w-full max-w-md text-center max-h-[90vh] overflow-y-auto"
             >
-              <h2 className="text-4xl font-black mb-8 uppercase italic tracking-tighter">Gear Up</h2>
-              <div className="space-y-8 mb-10 text-left">
+              <h2 className="text-3xl md:text-4xl font-black mb-6 md:mb-8 uppercase italic tracking-tighter">Gear Up</h2>
+              <div className="space-y-4 md:space-y-8 mb-6 md:mb-10 text-left">
                 <div>
-                  <p className="text-[10px] uppercase font-black tracking-[0.2em] text-slate-500 mb-4">P1 Paddle Aura</p>
-                  <div className="flex flex-wrap gap-3">
+                  <p className="text-[10px] uppercase font-black tracking-[0.2em] text-slate-500 mb-3 md:mb-4">P1 Paddle Aura</p>
+                  <div className="flex flex-wrap gap-2 md:gap-3">
                     {PADDLE_COLORS.map(color => (
                       <button
                         key={color}
                         onClick={() => updateConfig("p1Color", color)}
                         className={cn(
-                          "w-8 h-8 rounded-lg transition-all hover:scale-110 border-2 border-transparent",
+                          "w-7 h-7 md:w-8 md:h-8 rounded-lg transition-all hover:scale-110 border-2 border-transparent",
                           config.p1Color === color && "border-white shadow-[0_0_10px_white]"
                         )}
                         style={{ backgroundColor: color }}
@@ -302,14 +306,14 @@ export default function Home({ onStart, config, setConfig }: HomeProps) {
                 </div>
                 {showCustomization === "pvp" && (
                   <div>
-                    <p className="text-[10px] uppercase font-black tracking-[0.2em] text-slate-500 mb-4">P2 Paddle Aura</p>
-                    <div className="flex flex-wrap gap-3">
+                    <p className="text-[10px] uppercase font-black tracking-[0.2em] text-slate-500 mb-3 md:mb-4">P2 Paddle Aura</p>
+                    <div className="flex flex-wrap gap-2 md:gap-3">
                       {PADDLE_COLORS.map(color => (
                         <button
                           key={color}
                           onClick={() => updateConfig("p2Color", color)}
                           className={cn(
-                            "w-8 h-8 rounded-lg transition-all hover:scale-110 border-2 border-transparent",
+                            "w-7 h-7 md:w-8 md:h-8 rounded-lg transition-all hover:scale-110 border-2 border-transparent",
                             config.p2Color === color && "border-white shadow-[0_0_10px_white]"
                           )}
                           style={{ backgroundColor: color }}
@@ -319,21 +323,21 @@ export default function Home({ onStart, config, setConfig }: HomeProps) {
                   </div>
                 )}
               </div>
-                <div className="space-y-4">
-                  <Button 
-                    onClick={() => onStart(showCustomization)}
-                    className="w-full h-16 bg-white text-black hover:bg-[#87CEEB] hover:text-black font-black text-xl rounded-xl"
-                  >
-                    ENTER ARENA
-                  </Button>
-                  <Button 
-                    variant="ghost"
-                    onClick={() => setShowCustomization(null)}
-                    className="w-full h-14 text-white hover:bg-sky-400 hover:text-black font-black text-lg rounded-xl transition-colors"
-                  >
-                    BACK
-                  </Button>
-                </div>
+              <div className="space-y-3 md:space-y-4">
+                <Button 
+                  onClick={() => onStart(showCustomization)}
+                  className="w-full h-14 md:h-16 bg-white text-black hover:bg-[#87CEEB] hover:text-black font-black text-lg md:text-xl rounded-xl"
+                >
+                  ENTER ARENA
+                </Button>
+                <Button 
+                  variant="ghost"
+                  onClick={() => setShowCustomization(null)}
+                  className="w-full h-12 md:h-14 text-white hover:bg-sky-400 hover:text-black font-black text-base md:text-lg rounded-xl transition-colors"
+                >
+                  BACK
+                </Button>
+              </div>
             </motion.div>
           </motion.div>
         )}

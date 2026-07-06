@@ -171,6 +171,41 @@ export default function Game({ mode, config, onBack }: GameProps) {
 
     initPositions();
 
+    const handleResize = () => {
+      const oldHeight = canvas.height;
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+      if (oldHeight > 0) {
+        paddle1Y.current = (paddle1Y.current / oldHeight) * canvas.height;
+        paddle2Y.current = (paddle2Y.current / oldHeight) * canvas.height;
+      }
+    };
+    window.addEventListener("resize", handleResize);
+
+    const handleTouch = (e: TouchEvent) => {
+      e.preventDefault();
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+
+      for (let i = 0; i < e.touches.length; i++) {
+        const touch = e.touches[i];
+        const touchX = (touch.clientX - rect.left) * scaleX;
+        const touchY = (touch.clientY - rect.top) * scaleY;
+
+        if (touchX < canvas.width / 2) {
+          paddle1Y.current = Math.max(0, Math.min(canvas.height - PADDLE_H, touchY - PADDLE_H / 2));
+        } else {
+          if (mode === "pvp") {
+            paddle2Y.current = Math.max(0, Math.min(canvas.height - PADDLE_H, touchY - PADDLE_H / 2));
+          }
+        }
+      }
+    };
+
+    canvas.addEventListener("touchstart", handleTouch, { passive: false });
+    canvas.addEventListener("touchmove", handleTouch, { passive: false });
+
     const update = () => {
       if (gameState === "paused" || gameState === "gameOver") return;
 
@@ -306,6 +341,9 @@ export default function Game({ mode, config, onBack }: GameProps) {
 
     return () => {
       cancelAnimationFrame(animationFrameId);
+      window.removeEventListener("resize", handleResize);
+      canvas.removeEventListener("touchstart", handleTouch);
+      canvas.removeEventListener("touchmove", handleTouch);
     };
   }, [gameState, mode, config]);
 
@@ -373,7 +411,7 @@ export default function Game({ mode, config, onBack }: GameProps) {
       </div>
 
       <div 
-        className="relative w-full max-w-[950px] aspect-[2/1] bg-slate-900/30 rounded-[20px] overflow-hidden shadow-2xl transition-all duration-500"
+        className="relative w-full max-w-[950px] aspect-[4/3] md:aspect-[2/1] bg-slate-900/30 rounded-[20px] overflow-hidden shadow-2xl transition-all duration-500"
         style={{ border: `4px solid ${config.bgColor}` }}
       >
         <canvas
@@ -387,22 +425,22 @@ export default function Game({ mode, config, onBack }: GameProps) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/90 backdrop-blur-xl z-50"
+              className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/90 backdrop-blur-xl z-50 p-4"
             >
               <motion.div 
                 initial={{ scale: 0.9, y: 20 }}
                 animate={{ scale: 1, y: 0 }}
-                className="bg-slate-900/90 p-12 rounded-2xl border-2 border-white/10 shadow-2xl flex flex-col items-center w-full max-w-sm text-center"
+                className="bg-slate-900/90 p-4 md:p-12 rounded-2xl border-2 border-white/10 shadow-2xl flex flex-col items-center w-full max-w-xs md:max-w-sm text-center"
               >
-                <h1 className="text-4xl mb-8 font-black italic uppercase tracking-tighter">Match Paused</h1>
-                <div className="flex flex-col gap-3 w-full">
-                  <Button onClick={() => setGameState("playing")} className="btn-primary h-14">
+                <h1 className="text-2xl md:text-4xl mb-4 md:mb-8 font-black italic uppercase tracking-tighter">Match Paused</h1>
+                <div className="flex flex-col gap-2 md:gap-3 w-full">
+                  <Button onClick={() => setGameState("playing")} className="btn-primary h-10 md:h-14 text-sm md:text-base">
                     RESUME GAME
                   </Button>
-                  <Button variant="outline" onClick={resetGame} className="btn-secondary h-14">
+                  <Button variant="outline" onClick={resetGame} className="btn-secondary h-10 md:h-14 text-sm md:text-base">
                     RESTART MATCH
                   </Button>
-                  <Button variant="outline" onClick={onBack} className="btn-secondary h-14 !mb-0">
+                  <Button variant="outline" onClick={onBack} className="btn-secondary h-10 md:h-14 text-sm md:text-base !mb-0">
                     EXIT TO MENU
                   </Button>
                 </div>
@@ -414,35 +452,35 @@ export default function Game({ mode, config, onBack }: GameProps) {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/95 backdrop-blur-xl z-50"
+              className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/95 backdrop-blur-xl z-50 p-4"
             >
               <motion.div 
                 initial={{ scale: 0.5, rotate: -10 }}
                 animate={{ scale: 1, rotate: 0 }}
-                className="text-center bg-slate-900/95 p-6 rounded-2xl border-2 border-white/10 w-full max-w-[320px] shadow-[0_0_60px_rgba(135,206,235,0.25)] flex flex-col items-center"
+                className="text-center bg-slate-900/95 p-4 md:p-6 rounded-2xl border-2 border-white/10 w-full max-w-[280px] md:max-w-[320px] shadow-[0_0_60px_rgba(135,206,235,0.25)] flex flex-col items-center"
               >
-                <p className="text-[10px] uppercase text-[#87CEEB] tracking-[0.3em] mb-1 font-black">HURRAYYY!</p>
-                <h1 className="text-xl text-white mb-1 font-light italic">CONGRATULATIONS!</h1>
-                <h2 className="text-3xl mb-4 font-black tracking-tighter uppercase italic" style={{ color: winner === 0 ? config.p1Color : config.p2Color }}>
+                <p className="text-[8px] md:text-[10px] uppercase text-[#87CEEB] tracking-[0.3em] mb-0.5 md:mb-1 font-black">HURRAYYY!</p>
+                <h1 className="text-base md:text-xl text-white mb-0.5 md:mb-1 font-light italic">CONGRATULATIONS!</h1>
+                <h2 className="text-2xl md:text-3xl mb-2 md:mb-4 font-black tracking-tighter uppercase italic" style={{ color: winner === 0 ? config.p1Color : config.p2Color }}>
                   {winner === 0 ? "P1" : (mode === "ai" ? "CPU" : "P2")} WINS!
                 </h2>
                 
-                <div className="bg-white/5 rounded-xl p-4 mb-5 border border-white/10 w-full">
-                  <p className="text-[9px] uppercase text-slate-500 mb-2 font-black tracking-widest">Final Score Card</p>
-                  <p className="text-2xl font-black mb-1 italic">SETS: {games[0]} - {games[1]}</p>
-                  <div className="text-[10px] text-slate-400 font-bold flex justify-center gap-4 mb-2">
+                <div className="bg-white/5 rounded-xl p-3 md:p-4 mb-3 md:mb-5 border border-white/10 w-full">
+                  <p className="text-[8px] md:text-[9px] uppercase text-slate-500 mb-1 md:mb-2 font-black tracking-widest">Final Score Card</p>
+                  <p className="text-xl md:text-2xl font-black mb-0.5 md:mb-1 italic">SETS: {games[0]} - {games[1]}</p>
+                  <div className="text-[9px] md:text-[10px] text-slate-400 font-bold flex justify-center gap-3 md:gap-4 mb-1 md:mb-2">
                     {setHistory.map((set, i) => (
                       <span key={i}>SET {i+1}: {set.p1}-{set.p2}</span>
                     ))}
                   </div>
-                  <p className="text-[#87CEEB] text-[10px] font-black mt-3 border-t border-white/10 pt-3 tracking-widest uppercase">Time: {formatTime(time)}</p>
+                  <p className="text-[#87CEEB] text-[9px] md:text-[10px] font-black mt-2 md:mt-3 border-t border-white/10 pt-2 md:pt-3 tracking-widest uppercase">Time: {formatTime(time)}</p>
                 </div>
                 
-                <div className="flex flex-col gap-2 w-full">
-                  <Button onClick={resetGame} className="btn-primary !py-2 !text-sm h-12">
+                <div className="flex flex-col gap-1.5 md:gap-2 w-full">
+                  <Button onClick={resetGame} className="btn-primary !py-1 md:!py-2 !text-xs md:!text-sm h-10 md:h-12">
                     REMATCH
                   </Button>
-                  <Button variant="outline" onClick={onBack} className="btn-secondary !mb-0 !py-2 !text-sm h-12">
+                  <Button variant="outline" onClick={onBack} className="btn-secondary !mb-0 !py-1 md:!py-2 !text-xs md:!text-sm h-10 md:h-12">
                     MAIN MENU
                   </Button>
                 </div>
@@ -462,6 +500,20 @@ export default function Game({ mode, config, onBack }: GameProps) {
           border-radius: 15px;
           gap: 20px;
           margin-bottom: 20px;
+        }
+        @media (max-width: 640px) {
+          .real-scoreboard {
+            padding: 6px 14px;
+            gap: 10px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+          }
+          .active-set {
+            font-size: 1rem !important;
+          }
+          .real-scoreboard span {
+            font-size: 8px !important;
+          }
         }
         .active-set {
           font-size: 1.5rem;
