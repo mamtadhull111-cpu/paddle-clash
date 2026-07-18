@@ -11,6 +11,7 @@ export interface GameConfig {
   tableColor: string;
   soundEnabled: boolean;
   difficulty: "easy" | "medium" | "hard";
+  courtSurface: "hard" | "clay" | "grass";
 }
 
 export default function App() {
@@ -20,9 +21,10 @@ export default function App() {
     p1Color: "#22d3ee", // Cyan
     p2Color: "#f472b6", // Pink
     bgColor: "#020617", // Dark Slate
-    tableColor: "#ffffff",
+    tableColor: "#1e40af", // Default hard court deep blue
     soundEnabled: true,
     difficulty: "medium",
+    courtSurface: "hard",
   });
 
   return (

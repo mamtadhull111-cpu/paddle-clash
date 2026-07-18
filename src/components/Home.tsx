@@ -167,8 +167,18 @@ export default function Home({ onStart, config, setConfig }: HomeProps) {
                     </div>
                   </div>
                   <div className="bg-white/5 p-6 rounded-xl border-2 border-white/5">
-                    <p className="text-pink-400 uppercase text-[10px] font-black mb-2 tracking-widest">The Goal</p>
-                    <p className="text-xs leading-relaxed font-bold">Deflect the ball using your paddle. If the ball passes the opponent's boundary, you score a point. Hit the ball with the edges of your paddle to add spin!</p>
+                    <p className="text-yellow-400 uppercase text-[10px] font-black mb-3 tracking-widest">Advanced Shots & Spin</p>
+                    <div className="space-y-2 text-[11px] text-slate-300">
+                      <p><kbd className="px-1.5 py-0.5 bg-slate-700 rounded text-white text-[10px]">F</kbd> or <kbd className="px-1.5 py-0.5 bg-slate-700 rounded text-white text-[10px]">Space</kbd> - <strong>Flat</strong>: Ultra-fast strike, neutral spin.</p>
+                      <p><kbd className="px-1.5 py-0.5 bg-slate-700 rounded text-white text-[10px]">T</kbd> - <strong>Topspin</strong>: Heavy forward spin, rapid dip, high kick bounce.</p>
+                      <p><kbd className="px-1.5 py-0.5 bg-slate-700 rounded text-white text-[10px]">C</kbd> - <strong>Slice</strong>: Backspin with sideways curve, skids low on court.</p>
+                      <p><kbd className="px-1.5 py-0.5 bg-slate-700 rounded text-white text-[10px]">L</kbd> - <strong>Lob</strong>: High defensive arc to reset position.</p>
+                      <p><kbd className="px-1.5 py-0.5 bg-slate-700 rounded text-white text-[10px]">D</kbd> - <strong>Drop Shot</strong>: Extremely soft touch to drop right over the net.</p>
+                    </div>
+                  </div>
+                  <div className="bg-white/5 p-6 rounded-xl border-2 border-white/5">
+                    <p className="text-pink-400 uppercase text-[10px] font-black mb-2 tracking-widest">Realistic Physics & Serving</p>
+                    <p className="text-xs leading-relaxed font-bold">Hold Space/Touch to charge serve power while aiming with keys or clicking. Bounces are fully affected by the selected Court Surface!</p>
                   </div>
                 </div>
               </motion.div>
@@ -220,6 +230,36 @@ export default function Home({ onStart, config, setConfig }: HomeProps) {
                       checked={config.soundEnabled} 
                       onCheckedChange={(val) => updateConfig("soundEnabled", val)} 
                     />
+                  </div>
+
+                  <div className="bg-white/5 p-4 rounded-xl border-2 border-white/5 space-y-3">
+                    <p className="text-xs uppercase tracking-widest text-slate-300 font-black">Court Surface</p>
+                    <div className="grid grid-cols-3 gap-2">
+                      {[
+                        { id: "hard", label: "Hard", color: "#1e40af" },
+                        { id: "clay", label: "Clay", color: "#c2410c" },
+                        { id: "grass", label: "Grass", color: "#15803d" }
+                      ].map((surf) => (
+                        <button
+                          key={surf.id}
+                          onClick={() => {
+                            setConfig(prev => ({
+                              ...prev,
+                              courtSurface: surf.id as any,
+                              tableColor: surf.color
+                            }));
+                          }}
+                          className={cn(
+                            "py-2 px-1 text-[11px] font-black uppercase rounded-lg border-2 transition-all",
+                            config.courtSurface === surf.id
+                              ? "bg-white text-black border-white shadow-[0_0_10px_rgba(255,255,255,0.2)]"
+                              : "bg-black/30 text-slate-400 border-white/10 hover:border-[#87CEEB] hover:text-[#87CEEB]"
+                          )}
+                        >
+                          {surf.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
                   <Button 
